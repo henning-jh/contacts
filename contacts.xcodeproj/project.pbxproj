@@ -93,14 +93,14 @@
 		2E64C8FE1F26808100819CB1 /* contacts */ = {
 			isa = PBXGroup;
 			children = (
-				2E64C9061F26808100819CB1 /* contacts.xcdatamodeld */,
+				2E64C9011F26808100819CB1 /* ViewController.swift */,
+				2E193CD91F2A45AD00D25ADB /* Constants.swift */,
 				2E64C91C1F269FD300819CB1 /* ContactCell.swift */,
 				2E3A37401F291F3700278DA1 /* CreateContactCell.swift */,
 				2E979A9E1F2B71F700DE0440 /* HeaderCell.swift */,
-				2E64C9011F26808100819CB1 /* ViewController.swift */,
 				2E64C91E1F27C6B400819CB1 /* ViewModel.swift */,
 				2E64C8FF1F26808100819CB1 /* AppDelegate.swift */,
-				2E193CD91F2A45AD00D25ADB /* Constants.swift */,
+				2E64C9061F26808100819CB1 /* contacts.xcdatamodeld */,
 				2E913C551F81694F007ECADF /* Interface Elements */,
 				2E64C90E1F26808100819CB1 /* Info.plist */,
 				2E913C5C1F818114007ECADF /* UIViewController+Alert.swift */,

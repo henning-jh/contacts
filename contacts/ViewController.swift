@@ -20,7 +20,8 @@ class ViewController: UIViewController
 	fileprivate var runningMail:String = ""	// the email the user is entering at the top of the screen
 	fileprivate var runningName:String = ""	// the name the user is entering at the top of the screen
 	
-	lazy var refreshControl: UIRefreshControl = {	// you said I could create the UIRefreshControl via code
+	lazy var refreshControl: UIRefreshControl =
+	{
 		let refreshControl = UIRefreshControl()
 		refreshControl.addTarget(self, action: #selector(ViewController.handleRefresh(refreshControl:)), for: UIControlEvents.valueChanged)
 		return refreshControl
@@ -34,12 +35,13 @@ class ViewController: UIViewController
 		self.tableView.addSubview(self.refreshControl)
 		
 		// I have a bunch of table cell XIB's so that I can define the look using autolayout.
+		// This might be going overboard.
 		
 		self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-		self.tableView.register(UINib(nibName: "ContactCell", bundle: nil), forCellReuseIdentifier: "contactCellID")
-		self.tableView.register(UINib(nibName: "CreateContactCell", bundle: nil), forCellReuseIdentifier: "createContactCellID")
-		self.tableView.register(UINib(nibName: "HeaderCell", bundle: nil), forCellReuseIdentifier: "header")
-		self.tableView.register(UINib(nibName: "AddContactCell", bundle: nil), forCellReuseIdentifier: "addContactCellID")
+		self.tableView.register(UINib(nibName: "ContactCell", bundle: nil), forCellReuseIdentifier: ContactCell.identifier)
+		self.tableView.register(UINib(nibName: "CreateContactCell", bundle: nil), forCellReuseIdentifier: CreateContactCell.identifier)
+		self.tableView.register(UINib(nibName: "HeaderCell", bundle: nil), forCellReuseIdentifier: HeaderCell.identifier)
+		self.tableView.register(UINib(nibName: "AddContactCell", bundle: nil), forCellReuseIdentifier: UITableViewCell.addContactIdentifier)
 	}
 
 	override func viewWillAppear(_ animated: Bool)
@@ -182,19 +184,19 @@ extension ViewController: UITableViewDataSource
 	{
 		if indexPath.section == 0
 		{
-			let cell = tableView.dequeueReusableCell(withIdentifier: "createContactCellID", for: indexPath) as? CreateContactCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: CreateContactCell.identifier, for: indexPath) as? CreateContactCell
 			cell?.delegate = self
 			return cell!
 		}
 		else if indexPath.section == 1
 		{
 			// create this in its own section so that we can have some nice spacing between cells
-			return tableView.dequeueReusableCell(withIdentifier: "addContactCellID", for: indexPath)
+			return tableView.dequeueReusableCell(withIdentifier: UITableViewCell.addContactIdentifier, for: indexPath)
 		}
 		else
 		{
 			let contact = self.viewModel.getContact(indexPath.row)
-			let cell = tableView.dequeueReusableCell(withIdentifier: "contactCellID", for: indexPath) as? ContactCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: ContactCell.identifier, for: indexPath) as? ContactCell
 			cell?.name?.text = contact.name
 			cell?.mail?.text = contact.mail
 			return cell!
@@ -282,7 +284,7 @@ extension ViewController: UITableViewDelegate
 	
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
 	{
-		let cell = tableView.dequeueReusableCell(withIdentifier: "header") as? HeaderCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: HeaderCell.identifier) as? HeaderCell
 		
 		if section == 0
 		{
@@ -315,4 +317,9 @@ extension ViewController:CreateContactCellDelegate {
 			self.runningMail = value
 		}
 	}
+}
+
+extension UITableViewCell
+{
+	static let addContactIdentifier = "addContactCellID"
 }

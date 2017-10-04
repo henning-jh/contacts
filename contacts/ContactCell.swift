@@ -12,6 +12,8 @@ import FontAwesome_swift
 
 class ContactCell: UITableViewCell
 {
+	static let identifier = "contactCellID"
+	
 	@IBOutlet weak var name: UILabel!
 	@IBOutlet weak var mail: UILabel!
 	@IBOutlet weak var person: UIImageView!

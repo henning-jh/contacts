@@ -11,5 +11,7 @@ import UIKit
 
 class HeaderCell: UITableViewCell
 {
+	static let identifier = "headerCellID"
+	
 	@IBOutlet weak var label: UILabel!
 }

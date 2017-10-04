@@ -10,17 +10,21 @@ import Foundation
 import UIKit
 import CoreData
 
-enum CreateContactField {
+enum CreateContactField
+{
 	case kName
 	case kMail
 }
 
-protocol CreateContactCellDelegate: class {
+protocol CreateContactCellDelegate: class
+{
 	func textFieldChanged( type:CreateContactField, value: String )
 }
 
 class CreateContactCell: UITableViewCell
 {
+	static let identifier = "createContactCellID"
+	
 	@IBOutlet weak var emailIcon: UIImageView!
 	@IBOutlet weak var nameIcon: UIImageView!
 	@IBOutlet weak var name: UITextField!
