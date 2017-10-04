@@ -10,31 +10,25 @@ import Foundation
 import UIKit
 import CoreData
 
+enum CreateContactField {
+	case kName
+	case kMail
+}
+
+protocol CreateContactCellDelegate: class {
+	func textFieldChanged( type:CreateContactField, value: String )
+}
+
 class CreateContactCell: UITableViewCell
 {
 	@IBOutlet weak var emailIcon: UIImageView!
 	@IBOutlet weak var nameIcon: UIImageView!
 	@IBOutlet weak var name: UITextField!
 	@IBOutlet weak var mail: UITextField!
+
+	var delegate:CreateContactCellDelegate?
 	
-	override func layoutSubviews()
-	{
-		super.layoutSubviews()
-		
-		if name.delegate == nil
-		{
-			name.delegate = self
-			mail.delegate = self
-			
-			NotificationCenter.default.addObserver(self,
-			                                       selector: #selector(CreateContactCell.onContactCreated(_:)),
-			                                       name: NSNotification.Name(rawValue: Constants.Keys.NOTIF_CONTACT_CREATED),
-			                                       object: nil)
-			
-		}
-	}
-	
-	open func onContactCreated( _ notification: Notification )
+	open func onContactCreated()
 	{
 		name.text = ""
 		mail.text = ""
@@ -44,11 +38,16 @@ class CreateContactCell: UITableViewCell
 	{
 		super.awakeFromNib()
 		
+		name.delegate = self
+		mail.delegate = self
+		
 		self.emailIcon?.image = UIImage.fontAwesomeIcon(name: .envelope, textColor: UIColor.black, size: CGSize(width: 32, height: 32))
 		self.emailIcon?.alpha = 0.4
 		
 		self.nameIcon?.image = UIImage.fontAwesomeIcon(name: .user, textColor: UIColor.black, size: CGSize(width: 32, height: 32))
 		self.nameIcon?.alpha = 0.4
+		
+		self.selectionStyle = UITableViewCellSelectionStyle.none
 	}
 }
 
@@ -66,15 +65,11 @@ extension CreateContactCell: UITextFieldDelegate
 
 		if textField == name
 		{
-			NotificationCenter.default.post(name: NSNotification.Name(rawValue: Constants.Keys.NOTIF_NAME_CHANGE),
-			                                object: self,
-			                                userInfo: [Constants.Keys.KEY_NAME:newString])
+			delegate?.textFieldChanged( type: .kName, value:newString )
 		}
-		if textField == mail
+		else if textField == mail
 		{
-			NotificationCenter.default.post(name: NSNotification.Name(rawValue: Constants.Keys.NOTIF_MAIL_CHANGE),
-			                                object: self,
-			                                userInfo: [Constants.Keys.KEY_MAIL:newString])
+			delegate?.textFieldChanged( type: .kMail, value:newString )
 		}
 		return true
 	}

@@ -40,43 +40,12 @@ class ViewController: UIViewController
 		self.tableView.register(UINib(nibName: "CreateContactCell", bundle: nil), forCellReuseIdentifier: "createContactCellID")
 		self.tableView.register(UINib(nibName: "HeaderCell", bundle: nil), forCellReuseIdentifier: "header")
 		self.tableView.register(UINib(nibName: "AddContactCell", bundle: nil), forCellReuseIdentifier: "addContactCellID")
-		
-		NotificationCenter.default.addObserver(self,
-		                                       selector: #selector(ViewController.onNameChanged(_:)),
-		                                       name: NSNotification.Name(rawValue: Constants.Keys.NOTIF_NAME_CHANGE),
-		                                       object: nil)
-		NotificationCenter.default.addObserver(self,
-		                                       selector: #selector(ViewController.onMailChanged(_:)),
-		                                       name: NSNotification.Name(rawValue: Constants.Keys.NOTIF_MAIL_CHANGE),
-		                                       object: nil)
 	}
 
 	override func viewWillAppear(_ animated: Bool)
 	{
 		super.viewWillAppear(animated)
 		self.viewModel.loadLocalContacts()
-	}
-	
-	open func onNameChanged( _ notification: Notification )
-	{
-		// let's keep track of the text the user is typing here
-		
-		if let userInfo = notification.userInfo as? [String:AnyObject],
-		   let name = userInfo[Constants.Keys.KEY_NAME] as? String
-		{
-			self.runningName = name
-		}
-	}
-	
-	open func onMailChanged( _ notification: Notification )
-	{
-		// let's keep track of the text the user is typing here
-		
-		if let userInfo = notification.userInfo as? [String:AnyObject],
-		   let mail = userInfo[Constants.Keys.KEY_MAIL] as? String
-		{
-			self.runningMail = mail
-		}
 	}
 	
 	func handleRefresh(refreshControl: UIRefreshControl)
@@ -214,7 +183,7 @@ extension ViewController: UITableViewDataSource
 		if indexPath.section == 0
 		{
 			let cell = tableView.dequeueReusableCell(withIdentifier: "createContactCellID", for: indexPath) as? CreateContactCell
-			// TODO cell?.delegate = self
+			cell?.delegate = self
 			return cell!
 		}
 		else if indexPath.section == 1
@@ -278,7 +247,9 @@ extension ViewController: UITableViewDelegate
 		self.runningMail = ""
 		self.runningName = ""
 		
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Constants.Keys.NOTIF_CONTACT_CREATED), object: nil )
+		if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? CreateContactCell {
+			cell.onContactCreated()
+		}
 		
 		// scroll to bottom of view to show off the new contact
 //		let numRows = tableView.numberOfRows(inSection: 2)
@@ -327,5 +298,21 @@ extension ViewController: UITableViewDelegate
 		}
 		
 		return cell?.contentView
+	}
+}
+
+extension ViewController:CreateContactCellDelegate {
+
+	func textFieldChanged( type:CreateContactField, value: String ) {
+		switch type {
+		case .kName:
+			
+			// let's keep track of the text the user is typing here
+			self.runningName = value
+		case .kMail:
+			
+			// let's keep track of the text the user is typing here
+			self.runningMail = value
+		}
 	}
 }

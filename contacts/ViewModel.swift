@@ -247,18 +247,15 @@ extension ViewModel // internal / private stuff
 	
 	internal func fetchServerContacts( completion: @escaping (Bool) -> Void )
 	{
-		firstly
-		{ Void -> Promise<Any> in
+		firstly { Void -> Promise<Any> in
 			return self.dataPromise()
-		}.then
-		{ jsonObject -> Void in
+		}.then 	{ jsonObject -> Void in
 			if let array = jsonObject as? NSArray
 			{
 				self.addServerContacts(array)
 				completion(true)
 			}
-		}.catch
-		{ (error) in
+		}.catch { (error) in
 			completion(false)
 		}
 	}
