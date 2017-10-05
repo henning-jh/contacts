@@ -79,7 +79,7 @@ class ViewController: UIViewController
 	
 	@IBAction func removeAllContacts(_ sender: Any)
 	{
-		let alert = UIAlertController(title: "Are you sure you want to delete all contacts?", message: "This is here for testing.", preferredStyle: UIAlertControllerStyle.alert)
+		let alert = UIAlertController(title: "Are you sure you want to delete all contacts?", message: nil, preferredStyle: UIAlertControllerStyle.alert)
 		let deleteAction = UIAlertAction(title: "Delete All", style: UIAlertActionStyle.default)
 		{
 			[unowned self] action in
@@ -88,17 +88,11 @@ class ViewController: UIViewController
 			hud.bezelView.color = UIColor.white
 			hud.label.text = "Deleting..."
 			
-			DispatchQueue.global().async
-			{
-				self.viewModel.removeAllContacts()
-				
-				DispatchQueue.main.async
-				{
-					MBProgressHUD.hide(for: self.view, animated: true)
-					
-					self.tableView.reloadData()
-				}
-			}
+			self.viewModel.removeAllContacts()
+			
+			MBProgressHUD.hide(for: self.view, animated: true)
+			
+			self.tableView.reloadData()
 		}
   
 		let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil)
@@ -114,7 +108,7 @@ class ViewController: UIViewController
 		// This code was for testing creation of contacts before I got the proper UI in place.
 		// I left it here in case you were curious.
 		
-		let alert = UIAlertController(title: "New Contact", message: "This is here for testing.", preferredStyle: UIAlertControllerStyle.alert)
+		let alert = UIAlertController(title: "New Contact", message: nil, preferredStyle: UIAlertControllerStyle.alert)
 		let saveAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.default)
 			{
 				[unowned self] action in

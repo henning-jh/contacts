@@ -34,17 +34,14 @@ open class ViewModel
 {
 	fileprivate var contacts: [NSManagedObject] = []	// contacts cache
 	
-	fileprivate var managedContext:NSManagedObjectContext?
+	func managedContext() -> NSManagedObjectContext?
 	{
-		get
+		guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else
 		{
-			guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else
-			{
-				return nil
-			}
-			
-			return appDelegate.managedObjectContext
+			return nil
 		}
+		
+		return appDelegate.managedObjectContext
 	}
 	
 	var numContacts:Int
@@ -80,7 +77,7 @@ open class ViewModel
 	
 	open func addContact(name: String, mail:String, cid:Int = -1)
 	{
-		guard let managedContext = self.managedContext else { return }
+		guard let managedContext = self.managedContext() else { return }
 		
 		let entity = NSEntityDescription.entity(forEntityName: "Contact", in: managedContext)
 		let contact = NSManagedObject(entity: entity!, insertInto: managedContext)
@@ -95,17 +92,16 @@ open class ViewModel
 	
 	open func removeAllContacts()
 	{
-		guard let managedContext = self.managedContext else
+		guard let managedContext = self.managedContext() else
 		{
 			return
 		}
 		
 		do
 		{
-			for contact in contacts
-			{
-				managedContext.delete(contact)
-			}
+			let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Contact")
+			let deleteRequest = NSBatchDeleteRequest( fetchRequest: fetchRequest)
+			try managedContext.execute(deleteRequest)
 			
 			try managedContext.save()
 			contacts.removeAll()
@@ -118,7 +114,7 @@ open class ViewModel
 	
 	open func loadLocalContacts()
 	{
-		guard let managedContext = self.managedContext else
+		guard let managedContext = self.managedContext() else
 		{
 			return
 		}
@@ -139,7 +135,7 @@ open class ViewModel
 	
 	open func deleteContact(at index:Int)
 	{
-		guard index < contacts.count, let managedContext = self.managedContext else
+		guard index < contacts.count, let managedContext = self.managedContext() else
 		{
 			return
 		}
@@ -210,7 +206,7 @@ extension ViewModel // internal / private stuff
 		
 		do
 		{
-			try self.managedContext?.save()
+			try self.managedContext()?.save()
 		}
 		catch let error as NSError
 		{
